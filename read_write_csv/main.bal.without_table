@@ -8,7 +8,7 @@ type inputData record {
 };
 
 type outputData record {
-    readonly int employee_id;
+    int employee_id;
     int gas_fill_up_count;
     float total_fuel_cost;
     float total_gallons;
@@ -23,9 +23,9 @@ public function main() {
     inputData[] input_data_arr = [];
     inputData inputEntry;
     outputData outputEntry;
-    string[][] data_output = [];
+    map<outputData> dataOutput = {};
 
-    table<outputData> key(employee_id) output_data_table = table[];
+    string[][] data_output = [];
 
     checkpanic ipData.forEach(function(string[] val) {
         inputEntry = {
@@ -39,41 +39,39 @@ public function main() {
     });
 
     foreach var data in input_data_arr {
-        if output_data_table.hasKey(data.employee_id) {
-            outputEntry = <outputData>output_data_table[data.employee_id];
-
-            _ = output_data_table.remove(data.employee_id);
-            output_data_table.add({
+        if dataOutput.hasKey(data.employee_id.toBalString()) {
+            outputEntry = <outputData>dataOutput[data.employee_id.toBalString()];
+            dataOutput[data.employee_id.toBalString()] = {
                 employee_id: data.employee_id,
                 gas_fill_up_count: outputEntry["gas_fill_up_count"]+1,
                 total_fuel_cost: outputEntry["total_fuel_cost"] + (data.gallons * data.gas_price),
                 total_gallons: outputEntry["total_gallons"] + data.gallons,
                 total_miles_accrued: (outputEntry.gas_fill_up_count == 1) ? (data.odometer_reading - outputEntry.prevOdometerReading) : (data.odometer_reading - outputEntry.prevOdometerReading) + outputEntry["total_miles_accrued"],
                 prevOdometerReading: data.odometer_reading
-            });
-
+            };
         }
         else {
-            output_data_table.add({
+            dataOutput[data.employee_id.toBalString()] = {
                 employee_id: data.employee_id,
                 gas_fill_up_count: 1,
                 total_fuel_cost: (data.gallons * data.gas_price),
                 total_gallons: data.gallons,
                 total_miles_accrued: data.odometer_reading,
                 prevOdometerReading: data.odometer_reading
-            });
+            };
         }
     }
 
-    foreach var data in output_data_table {
+    foreach var k in dataOutput.keys() {
         data_output.push([
-            data["employee_id"].toBalString(),
-            data["gas_fill_up_count"].toBalString(),
-            data["total_fuel_cost"].toBalString(),
-            data["total_gallons"].toBalString(),
-            data["total_miles_accrued"].toBalString()
+            dataOutput[k]["employee_id"].toBalString(),
+            dataOutput[k]["gas_fill_up_count"].toBalString(),
+            dataOutput[k]["total_fuel_cost"].toBalString(),
+            dataOutput[k]["total_gallons"].toBalString(),
+            dataOutput[k]["total_miles_accrued"].toBalString()
         ]);
     }
 
-    checkpanic io:fileWriteCsv("./output.csv", data_output);
+
+    checkpanic io:fileWriteCsv("./output.csv", data_output);    
 }
