@@ -13,12 +13,60 @@ type outputData record {
     float total_fuel_cost;
     float total_gallons;
     int total_miles_accrued;
+    int prevOdometerReading;
 };
 
 
 public function main() {
-    // map<inputData>|io:Error ipData = io:fileReadCsv("./input.csv");
-    string[][]|io:Error ipData = io:fileReadCsv("./input.csv");
-    // table<inputData> key(employee_id) ipData = io:fileReadCsv("./input.csv");
-    io:println(ipData);
+
+
+    // io:ReadableCSVChannel|io:Error? csvChannel = checkpanic io:openReadableCsvFile("./input.csv");
+    // io:println(csvChannel);
+
+    stream<string[], io:Error?> ipData = checkpanic io:fileReadCsvAsStream("./input.csv");
+
+    inputData[] input_data_arr = [];
+    inputData inputEntry;
+    outputData outputEntry;
+    map<outputData> dataOutput = {};
+
+    checkpanic ipData.forEach(function(string[] val) {
+        inputEntry = {
+            employee_id: checkpanic int:fromString(val[0]),
+            odometer_reading: checkpanic int:fromString(val[1]),
+            gallons: checkpanic float:fromString(val[2]),
+            gas_price: checkpanic float:fromString(val[3])
+        };
+
+        input_data_arr.push(inputEntry);
+    });
+
+    foreach var data in input_data_arr {
+        if dataOutput.hasKey(data.employee_id.toBalString()) {
+            outputEntry = <outputData>dataOutput[data.employee_id.toBalString()];
+            dataOutput[data.employee_id.toBalString()] = {
+                employee_id: data.employee_id,
+                gas_fill_up_count: outputEntry["gas_fill_up_count"]+1,
+                total_fuel_cost: outputEntry["total_fuel_cost"] + (data.gallons * data.gas_price),
+                total_gallons: outputEntry["total_gallons"] + data.gallons,
+                total_miles_accrued: (outputEntry.gas_fill_up_count == 1) ? (data.odometer_reading - outputEntry.prevOdometerReading) : (data.odometer_reading - outputEntry.prevOdometerReading) + outputEntry["total_miles_accrued"],
+                prevOdometerReading: data.odometer_reading
+            };
+        }
+        else {
+            dataOutput[data.employee_id.toBalString()] = {
+                employee_id: data.employee_id,
+                gas_fill_up_count: 1,
+                total_fuel_cost: (data.gallons * data.gas_price),
+                total_gallons: data.gallons,
+                total_miles_accrued: data.odometer_reading,
+                prevOdometerReading: data.odometer_reading
+            };
+        }
+    }
+
+    io:println(dataOutput);
+
+    
+
 }
