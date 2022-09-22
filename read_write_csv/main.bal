@@ -16,12 +16,7 @@ type outputData record {
     int prevOdometerReading;
 };
 
-
 public function main() {
-
-
-    // io:ReadableCSVChannel|io:Error? csvChannel = checkpanic io:openReadableCsvFile("./input.csv");
-    // io:println(csvChannel);
 
     stream<string[], io:Error?> ipData = checkpanic io:fileReadCsvAsStream("./input.csv");
 
@@ -29,6 +24,8 @@ public function main() {
     inputData inputEntry;
     outputData outputEntry;
     map<outputData> dataOutput = {};
+
+    string[][] data_output = [];
 
     checkpanic ipData.forEach(function(string[] val) {
         inputEntry = {
@@ -65,8 +62,16 @@ public function main() {
         }
     }
 
-    io:println(dataOutput);
+    foreach var k in dataOutput.keys() {
+        data_output.push([
+            dataOutput[k]["employee_id"].toBalString(),
+            dataOutput[k]["gas_fill_up_count"].toBalString(),
+            dataOutput[k]["total_fuel_cost"].toBalString(),
+            dataOutput[k]["total_gallons"].toBalString(),
+            dataOutput[k]["total_miles_accrued"].toBalString()
+        ]);
+    }
 
-    
 
+    checkpanic io:fileWriteCsv("./output.csv", data_output);    
 }
