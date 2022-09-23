@@ -1,0 +1,155 @@
+<div class="problem-statement problem-statement-71c5336544f242048ca7a589496d4f8a"><div class="semi-bold margin-bottom-20">2.2 Go Figure Payment Data Batches</div><div class="fullstack-problem complete-problem-statement black-333"><h2 dir="auto">Problem Statement</h2>
+<p>Go Figure finance department wants to upload all petty cash payment information to the database. Payment details are recorded in a JSON file, and you need to read that file and upload the data to the database table.</p>
+<p dir="auto">You have to insert a batch of payment data into the&nbsp;Payment&nbsp;table. Your task is to read the payment data from the given input JSON file and use the&nbsp;batchExecute&nbsp;operation of the JDBC Client to insert the payment data into the&nbsp;Payment&nbsp;table. The sample input file is given as&nbsp;payments.json.</p>
+<p dir="auto">Input JSON file content is based on the following JSON schema.</p>
+<pre class="prettyprint"><code>{
+  "type": "array",
+  "items": [
+    {
+      "type": "object",
+      "properties": {
+        "employee_id": {
+          "type": "integer"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "employee_id",
+        "amount",
+        "reason",
+        "date"
+      ]
+    }
+  ]
+}
+</code></pre>
+<p dir="auto">You need to return the auto-generated payment IDs for the inserted payment data in the batch as the output without issuing another query to the database.</p>
+<p dir="auto">You can assume the&nbsp;employee_id&nbsp;given in the&nbsp;payments.json&nbsp;file are valid and already contained in the&nbsp;Employee&nbsp;table.</p>
+<h2 dir="auto"><a id="user-content-database-details" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#database-details" aria-hidden="true"></a>Database Details</h2>
+<p dir="auto">Use the provided H2 database for this problem.</p>
+<blockquote>
+<p dir="auto">The sample database file is&nbsp;gofigure.mv.db, and the database name is&nbsp;gofigure. It is given within the&nbsp;db&nbsp;folder.</p>
+</blockquote>
+<p dir="auto">The following tables are already in the sample H2 database with some sample data. The column names and data types are below.</p>
+<p dir="auto"><strong>Table name</strong>&nbsp;:&nbsp;Employee</p>
+<table style="border-collapse:collapse;width:100.098%;height:124.781px" border="1"><tbody>
+
+<tr>
+<td style="height:20.7969px"><strong>Columns</strong></td>
+<td style="height:20.7969px"><strong>Type</strong></td>
+</tr>
+<tr>
+<td style="height:20.7969px">employee_id</td>
+<td style="height:20.7969px">integer, auto-incremented primary key</td>
+</tr>
+<tr>
+<td style="height:20.7969px">name</td>
+<td style="height:20.7969px">string</td>
+</tr>
+<tr>
+<td style="height:20.7969px">city</td>
+<td style="height:20.7969px">string</td>
+</tr>
+<tr>
+<td style="height:20.7969px">department</td>
+<td style="height:20.7969px">string</td>
+</tr>
+<tr>
+<td style="height:20.7969px">age</td>
+<td style="height:20.7969px">integer</td>
+</tr>
+
+</tbody></table>
+<p dir="auto">&nbsp;</p>
+<p dir="auto"><strong>Table Name</strong>:&nbsp;Payment</p>
+<table style="border-collapse:collapse;width:100.098%;height:124.781px" border="1"><tbody>
+
+<tr>
+<td style="height:20.7969px"><strong>Columns</strong></td>
+<td style="height:20.7969px"><strong>Type</strong></td>
+</tr>
+<tr>
+<td style="height:20.7969px">payment_id</td>
+<td style="height:20.7969px">integer, auto-incremented primary key</td>
+</tr>
+<tr>
+<td style="height:20.7969px">date</td>
+<td style="height:20.7969px">date</td>
+</tr>
+<tr>
+<td style="height:20.7969px">amount</td>
+<td style="height:20.7969px">decimal</td>
+</tr>
+<tr>
+<td style="height:20.7969px">employee_id</td>
+<td style="height:20.7969px">integer</td>
+</tr>
+<tr>
+<td style="height:20.7969px">reason</td>
+<td style="height:20.7969px">string</td>
+</tr>
+
+</tbody></table>
+<p dir="auto">&nbsp;</p>
+<ul dir="auto">
+<li>The database file is&nbsp;gofigure.mv.db. Use the JDBC URL as&nbsp;jdbc:h2:file:/path/to/db/file</li>
+<li>Username:&nbsp;root</li>
+<li>Password:&nbsp;root</li>
+</ul>
+<h2 dir="auto"><a id="user-content-constraints" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#constraints" aria-hidden="true"></a>Constraints</h2>
+<ul dir="auto">
+<li>Use the H2 database file provided in the&nbsp;db&nbsp;folder to validate queries and the Ballerina sample</li>
+<li>Use the maven dependency params approach to add the H2 database driver as a platform dependency in your Ballerina.toml</li>
+<li>You need to find the auto-generated payment IDs without issuing another query to the database.</li>
+</ul>
+<h2 dir="auto"><a id="user-content-definition" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#definition" aria-hidden="true"></a>Definition</h2>
+<p dir="auto">You have to write your code inside the following function.</p>
+<pre class="prettyprint"><code>function addPayments(string dbFilePath, string paymentFilePath) returns error|int[] {
+    // TODO: Write your code here
+}</code></pre>
+<h2 dir="auto"><a id="user-content-test-environment" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#test-environment" aria-hidden="true"></a>Test Environment</h2>
+<ul dir="auto">
+<li>You can run the tests with&nbsp;bal test, and it will run tests against the given sample DB.</li>
+</ul>
+<h2 dir="auto"><a id="user-content-examples" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#examples" aria-hidden="true"></a>Examples</h2>
+<p><a id="user-content-example-1" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#example-1" aria-hidden="true"></a>Example 1</p>
+<p dir="auto"><strong>Input:</strong>&nbsp;dbFilePath:&nbsp;"/path/to/file/gofigure", paymentFilePath:&nbsp;"/path/to/file/payments.json"</p>
+<p dir="auto">Sample&nbsp;payments.json&nbsp;file data:</p>
+<pre class="prettyprint"><code>[{
+        "employee_id": 4,
+        "amount": 12500.50,
+        "reason": "Fuel for the month January",
+        "date": "2022-02-03"
+    },
+    {
+        "employee_id": 1,
+        "amount": 10500.50,
+        "reason": "Medical Expenses for the month January",
+        "date": "2022-02-04"
+    },
+    {
+        "employee_id": 4,
+        "amount": 500.50,
+        "reason": "Fuel for the month February",
+        "date": "2022-03-03"
+    }
+]
+</code></pre>
+<p dir="auto"><strong>Output:</strong>&nbsp;[1,2,3]</p>
+<h2 dir="auto"><a id="user-content-hints" class="anchor" href="https://github.com/wso2-enterprise/ballerina-hackathon-problems/tree/main/Problem_2.2#hints" aria-hidden="true"></a>Hints</h2>
+<ul dir="auto">
+<li>Use the&nbsp;<a href="https://central.ballerina.io/ballerinax/java.jdbc" rel="nofollow">ballerinax/java.jdbc</a>&nbsp;module to work with the database</li>
+<li>Refer to the&nbsp;<a href="https://lib.ballerina.io/ballerinax/java.jdbc/latest" rel="nofollow">Prerequisite</a>&nbsp;section for steps to add the JDBC driver as a dependency</li>
+<li>Use&nbsp;<a href="https://lib.ballerina.io/ballerina/io/latest/functions#fileReadJson" rel="nofollow">io:fileReadJson</a>&nbsp;to read the JSON input file</li>
+<li>Convert the JSON values to application-specific types to work with data in a type-safe manner. Refer the&nbsp;<a href="https://ballerina.io/learn/by-example/converting-to-user-defined-type" rel="nofollow">Converting to user defined type</a>&nbsp;example</li>
+<li>Use&nbsp;<a href="https://lib.ballerina.io/ballerina/sql/latest/objectTypes/ParameterizedQuery" rel="nofollow">sql:ParameterizedQuery</a>&nbsp;and the&nbsp;<a href="https://lib.ballerina.io/ballerinax/java.jdbc/latest/clients/Client#batchExecute" rel="nofollow">batchExecute</a>&nbsp;remote method to work with the database</li>
+<li>Refer the&nbsp;<a href="https://ballerina.io/learn/by-example/jdbc-batch-execute-operation" rel="nofollow">batch execute</a>&nbsp;example</li>
+</ul></div><div class="clear"></div></div>
